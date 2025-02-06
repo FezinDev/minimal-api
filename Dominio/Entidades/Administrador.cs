@@ -12,7 +12,7 @@ namespace minimal_api.Dominio.Entidades;
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string Id { get; set; } = default!;
+        public int Id { get; set; } = default!;
 
         [Required]
         [StringLength(255)]
