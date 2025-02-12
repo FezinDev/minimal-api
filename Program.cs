@@ -7,6 +7,7 @@ using minimal_api.Dominio.Servicos;
 using minimal_api.Infraestrutura.DB;
 using minimal_api.Dominio.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using minimal_api.Dominio.ModelViews;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +30,7 @@ app.UseSwaggerUI();
 
 
 
-app.MapGet("/", () => "olá mundo!");
+app.MapGet("/", () => Results.Json(new Home()));
 
 app.MapPost("/login", ([FromBody]LoginDTO loginDTO, iAdministradorServico administradorServico) =>
 {
