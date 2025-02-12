@@ -12,6 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<iAdministradorServico, AdministradorService>();
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 builder.Services.AddDbContext<DbContexto>(options => {
     options.UseMySql(
         builder.Configuration.GetConnectionString("mysql"),
@@ -20,6 +23,9 @@ builder.Services.AddDbContext<DbContexto>(options => {
 });
 
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 
 
