@@ -9,14 +9,18 @@ using minimal_api.Dominio.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using minimal_api.Dominio.ModelViews;
 
+
+#region Builder
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<iAdministradorServico, AdministradorService>();
+builder.Services.AddScoped<iVeiculoServico, VeiculoService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<DbContexto>(options => {
+builder.Services.AddDbContext<DbContexto>(options =>
+{
     options.UseMySql(
         builder.Configuration.GetConnectionString("mysql"),
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("mysql"))
@@ -24,15 +28,14 @@ builder.Services.AddDbContext<DbContexto>(options => {
 });
 
 var app = builder.Build();
+#endregion
 
-app.UseSwagger();
-app.UseSwaggerUI();
-
-
-
+#region Home
 app.MapGet("/", () => Results.Json(new Home()));
+#endregion
 
-app.MapPost("/login", ([FromBody]LoginDTO loginDTO, iAdministradorServico administradorServico) =>
+#region Administradores
+app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, iAdministradorServico administradorServico) =>
 {
     if (administradorServico.Login(loginDTO) != null)
     {
@@ -43,7 +46,29 @@ app.MapPost("/login", ([FromBody]LoginDTO loginDTO, iAdministradorServico admini
         return Results.Unauthorized();
     }
 });
+#endregion
 
+#region Veiculo
+app.MapPost("/veiculos", ([FromBody] VeiculoDTO veiculoDTO, iVeiculoServico veiculoServico) =>
+{
+    var veiculo = new Veiculo
+    {
+        Nome = veiculoDTO.Nome,
+        Marca = veiculoDTO.Marca,
+        Ano = veiculoDTO.Ano
+    };
+
+    veiculoServico.Incluir(veiculo);
+
+    return Results.Created($"/veiculo/{veiculo.Id}", veiculo);
+
+
+});
+#endregion
+
+#region App
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.Run();
-
+#endregion
